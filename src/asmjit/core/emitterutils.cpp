@@ -87,7 +87,7 @@ void logInstructionEmitted(
 
   sb.appendChars(' ', logger->indentation(FormatIndentationGroup::kCode));
   self->_funcs.formatInstruction(sb, formatFlags, self, self->arch(), BaseInst(instId, options, self->extraReg()), opArray, Globals::kMaxOpCount,
-                                 false);
+                                 false, false);
 
   if (Support::test(formatFlags, FormatFlags::kMachineCode))
     finishFormattedLine(sb, logger->options(), self->bufferPtr(), size_t(emittedSize), relSize, immSize, self->inlineComment());
@@ -111,7 +111,7 @@ Error logInstructionFailed(
   opArrayFromEmitArgs(opArray, o0, o1, o2, opExt);
 
   self->_funcs.formatInstruction(sb, FormatFlags::kRegType, self, self->arch(), BaseInst(instId, options, self->extraReg()), opArray, Globals::kMaxOpCount,
-                                 false);
+                                 false, false);
 
   if (self->inlineComment()) {
     sb.append(" ; ");

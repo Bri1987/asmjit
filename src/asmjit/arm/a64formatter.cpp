@@ -153,7 +153,7 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatOperand(
   FormatFlags flags,
   const BaseEmitter* emitter,
   Arch arch,
-  const Operand_& op) noexcept {
+  const Operand_& op,int shift) noexcept {
 
   if (op.isReg()) {
     const BaseReg& reg = op.as<BaseReg>();
@@ -243,8 +243,12 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatOperand(
     if (Support::test(flags, FormatFlags::kHexImms) && uint64_t(val) > 9) {
       ASMJIT_PROPAGATE(sb.append("0x"));
       return sb.appendUInt(uint64_t(val), 16);
-    }
-    else {
+    }else if(shift != 0) {
+        //this imm must have predicate
+        ASMJIT_PROPAGATE(formatShiftOp(sb, (ShiftOp)i.predicate()));
+        ASMJIT_PROPAGATE(sb.append(' '));
+        return sb.appendInt(val, 10);
+    } else {
       return sb.appendInt(val, 10);
     }
   }
@@ -264,7 +268,7 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatInstruction(
   FormatFlags flags,
   const BaseEmitter* emitter,
   Arch arch,
-  const BaseInst& inst, const Operand_* operands, size_t opCount, int cond) noexcept {
+  const BaseInst& inst, const Operand_* operands, size_t opCount, int cond, int shift) noexcept {
 
   DebugUtils::unused(arch);
 
@@ -290,7 +294,7 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatInstruction(
     if(cond & (1 << i))
         ASMJIT_PROPAGATE(formatCondCode(sb, static_cast<CondCode>(op.as<Imm>().value())));
     else
-        ASMJIT_PROPAGATE(formatOperand(sb, flags, emitter, arch, op));
+        ASMJIT_PROPAGATE(formatOperand(sb, flags, emitter, arch, op, shift & (1 << i)));
   }
 
   return kErrorOk;

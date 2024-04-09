@@ -187,7 +187,7 @@ Error formatOperand(
 
 #if !defined(ASMJIT_NO_AARCH64)
   if (Environment::isFamilyAArch64(arch))
-    return a64::FormatterInternal::formatOperand(sb, formatFlags, emitter, arch, op);
+    return a64::FormatterInternal::formatOperand(sb, formatFlags, emitter, arch, op,false);
 #endif
 
   return kErrorInvalidArch;
@@ -276,16 +276,16 @@ Error formatInstruction(
   FormatFlags formatFlags,
   const BaseEmitter* emitter,
   Arch arch,
-  const BaseInst& inst, const Operand_* operands, size_t opCount,int cond) noexcept {
+  const BaseInst& inst, const Operand_* operands, size_t opCount,int cond, int shift) noexcept {
 
 #if !defined(ASMJIT_NO_X86)
   if (Environment::isFamilyX86(arch))
-    return x86::FormatterInternal::formatInstruction(sb, formatFlags, emitter, arch, inst, operands, opCount, cond);
+    return x86::FormatterInternal::formatInstruction(sb, formatFlags, emitter, arch, inst, operands, opCount, cond, shift);
 #endif
 
 #if !defined(ASMJIT_NO_AARCH64)
   if (Environment::isFamilyARM(arch))
-    return a64::FormatterInternal::formatInstruction(sb, formatFlags, emitter, arch, inst, operands, opCount, cond);
+    return a64::FormatterInternal::formatInstruction(sb, formatFlags, emitter, arch, inst, operands, opCount, cond, shift);
 #endif
 
   return kErrorInvalidArch;
@@ -411,7 +411,7 @@ Error formatNode(
       const InstNode* instNode = node->as<InstNode>();
       ASMJIT_PROPAGATE(builder->_funcs.formatInstruction(sb, formatOptions.flags(), builder,
         builder->arch(),
-        instNode->baseInst(), instNode->operands(), instNode->opCount(), false));
+        instNode->baseInst(), instNode->operands(), instNode->opCount(), false, false));
       break;
     }
 
@@ -527,7 +527,7 @@ Error formatNode(
       const InvokeNode* invokeNode = node->as<InvokeNode>();
       ASMJIT_PROPAGATE(builder->_funcs.formatInstruction(sb, formatOptions.flags(), builder,
         builder->arch(),
-        invokeNode->baseInst(), invokeNode->operands(), invokeNode->opCount(), false));
+        invokeNode->baseInst(), invokeNode->operands(), invokeNode->opCount(), false, false));
       break;
     }
 #endif

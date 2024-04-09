@@ -39,14 +39,14 @@ Error ASMJIT_CDECL formatOperand(
   FormatFlags flags,
   const BaseEmitter* emitter,
   Arch arch,
-  const Operand_& op) noexcept;
+  const Operand_& op,int shift) noexcept;
 
 Error ASMJIT_CDECL formatInstruction(
   String& sb,
   FormatFlags flags,
   const BaseEmitter* emitter,
   Arch arch,
-  const BaseInst& inst, const Operand_* operands, size_t opCount, int cond) noexcept;
+  const BaseInst& inst, const Operand_* operands, size_t opCount, int cond, int shift) noexcept;
 
 } // {FormatterInternal}
 
