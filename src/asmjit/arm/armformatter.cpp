@@ -469,7 +469,7 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatOperand(
   FormatFlags flags,
   const BaseEmitter* emitter,
   Arch arch,
-  const Operand_& op) noexcept {
+  const Operand_& op, int shift) noexcept {
 
   if (op.isReg()) {
     const BaseReg& reg = op.as<BaseReg>();

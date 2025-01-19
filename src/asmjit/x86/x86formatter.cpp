@@ -860,7 +860,7 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatInstruction(
   FormatFlags formatFlags,
   const BaseEmitter* emitter,
   Arch arch,
-  const BaseInst& inst, const Operand_* operands, size_t opCount) noexcept {
+  const BaseInst& inst, const Operand_* operands, size_t opCount, int cond, int shift) noexcept {
 
   InstId instId = inst.id();
   InstOptions options = inst.options();

@@ -266,7 +266,7 @@ public:
       FormatFlags formatFlags,
       const BaseEmitter* emitter,
       Arch arch,
-      const BaseInst& inst, const Operand_* operands, size_t opCount) ASMJIT_NOEXCEPT_TYPE;
+      const BaseInst& inst, const Operand_* operands, size_t opCount, int cond, int shift) ASMJIT_NOEXCEPT_TYPE;
 
     typedef Error (ASMJIT_CDECL* ValidateFunc)(const BaseInst& inst, const Operand_* operands, size_t opCount, ValidationFlags validationFlags) ASMJIT_NOEXCEPT_TYPE;
 

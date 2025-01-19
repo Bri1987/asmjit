@@ -597,6 +597,19 @@ public:
     _inlineComment = nullptr;
   }
 
+    ASMJIT_INLINE_NODEBUG BaseNode(NodeType nodeType, NodeFlags nodeFlags = NodeFlags::kNone) noexcept {
+        _prev = nullptr;
+        _next = nullptr;
+        _any._nodeType = nodeType;
+        _any._nodeFlags = nodeFlags;
+        _any._reserved0 = 0;
+        _any._reserved1 = 0;
+        _position = 0;
+        _userDataU64 = 0;
+        _passData = nullptr;
+        _inlineComment = nullptr;
+    }
+
   //! \}
 
   //! \name Accessors
@@ -778,7 +791,16 @@ public:
       _baseInst(instId, options) {
     _inst._opCapacity = uint8_t(opCapacity);
     _inst._opCount = uint8_t(opCount);
+      _resetOps();
   }
+
+    ASMJIT_INLINE_NODEBUG InstNode(InstId instId, InstOptions options, uint32_t opCount, uint32_t opCapacity = kBaseOpCapacity) noexcept
+            : BaseNode(NodeType::kInst, NodeFlags::kIsCode | NodeFlags::kIsRemovable | NodeFlags::kActsAsInst),
+              _baseInst(instId, options) {
+        _inst._opCapacity = uint8_t(opCapacity);
+        _inst._opCount = uint8_t(opCount);
+        _resetOps();
+    }
 
   //! \cond INTERNAL
   //! Reset all built-in operands, including `extraReg`.
