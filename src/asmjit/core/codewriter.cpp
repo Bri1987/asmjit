@@ -36,8 +36,8 @@ bool CodeWriterUtils::encodeOffset32(uint32_t* dst, int64_t offset64, const Offs
   if (unsignedLogic) {
     if (discardLsb) {
       ASMJIT_ASSERT(discardLsb <= 32);
-      if ((offset64 & Support::lsbMask<uint32_t>(discardLsb)) != 0)
-        return false;
+//      if ((offset64 & Support::lsbMask<uint32_t>(discardLsb)) != 0)
+//        return false;
       offset64 = int64_t(uint64_t(offset64) >> discardLsb);
     }
 
