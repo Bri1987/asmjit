@@ -537,7 +537,7 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatOperand(
     }
 
     if (m.hasShift()) {
-      ASMJIT_PROPAGATE(sb.append(' '));
+      ASMJIT_PROPAGATE(sb.append(", "));
       if (!m.isPreOrPost())
         ASMJIT_PROPAGATE(formatShiftOp(sb, m.shiftOp()));
       ASMJIT_PROPAGATE(sb.appendFormat(" %u", m.shift()));
@@ -557,7 +557,7 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatOperand(
     int64_t val = i.value();
     uint32_t predicate = i.predicate();
 
-    if (predicate) {
+    if (predicate || shift) {
       ASMJIT_PROPAGATE(formatShiftOp(sb, ShiftOp(predicate)));
       ASMJIT_PROPAGATE(sb.append(' '));
     }
