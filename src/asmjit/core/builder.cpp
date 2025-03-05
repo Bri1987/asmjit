@@ -12,6 +12,7 @@
 #include "../core/formatter.h"
 #include "../core/logger.h"
 #include "../core/support.h"
+#include <iostream>
 
 ASMJIT_BEGIN_NAMESPACE
 
@@ -832,6 +833,108 @@ Error BaseBuilder::serializeTo(BaseEmitter* dst) {
   } while (node_);
 
   return err;
+}
+
+Error BaseBuilder::serializeTo_debug(BaseEmitter *dst, const BaseBuilder *builder)
+{
+    Error err = kErrorOk;
+    Error re_err = kErrorOk;
+    BaseNode *node_ = _nodeList.first();
+
+    Operand_ opArray[Globals::kMaxOpCount];
+
+    do
+    {
+        dst->setInlineComment(node_->inlineComment());
+
+        if (node_->isInst())
+        {
+            InstNode *node = node_->as<InstNode>();
+
+            // NOTE: Inlined to remove one additional call per instruction.
+            dst->setInstOptions(node->options());
+            dst->setExtraReg(node->extraReg());
+
+            const Operand_ *op = node->operands();
+            const Operand_ *opExt = EmitterUtils::noExt;
+
+            uint32_t opCount = node->opCount();
+            if (opCount > 3)
+            {
+                uint32_t i = 4;
+                opArray[3] = op[3];
+
+                while (i < opCount)
+                {
+                    opArray[i].copyFrom(op[i]);
+                    i++;
+                }
+                while (i < Globals::kMaxOpCount)
+                {
+                    opArray[i].reset();
+                    i++;
+                }
+                opExt = opArray + 3;
+            }
+
+            err = dst->_emit(node->id(), op[0], op[1], op[2], opExt);
+        }
+        else if (node_->isLabel())
+        {
+            if (node_->isConstPool())
+            {
+                ConstPoolNode *node = node_->as<ConstPoolNode>();
+                err = dst->embedConstPool(node->label(), node->constPool());
+            }
+            else
+            {
+                LabelNode *node = node_->as<LabelNode>();
+                err = dst->bind(node->label());
+            }
+        }
+        else if (node_->isAlign())
+        {
+            AlignNode *node = node_->as<AlignNode>();
+            err = dst->align(node->alignMode(), node->alignment());
+        }
+        else if (node_->isEmbedData())
+        {
+            EmbedDataNode *node = node_->as<EmbedDataNode>();
+            err = dst->embedDataArray(node->typeId(), node->data(), node->itemCount(), node->repeatCount());
+        }
+        else if (node_->isEmbedLabel())
+        {
+            EmbedLabelNode *node = node_->as<EmbedLabelNode>();
+            err = dst->embedLabel(node->label(), node->dataSize());
+        }
+        else if (node_->isEmbedLabelDelta())
+        {
+            EmbedLabelDeltaNode *node = node_->as<EmbedLabelDeltaNode>();
+            err = dst->embedLabelDelta(node->label(), node->baseLabel(), node->dataSize());
+        }
+        else if (node_->isSection())
+        {
+            SectionNode *node = node_->as<SectionNode>();
+            err = dst->section(_code->sectionById(node->id()));
+        }
+        else if (node_->isComment())
+        {
+            CommentNode *node = node_->as<CommentNode>();
+            err = dst->comment(node->inlineComment());
+        }
+
+        if (err)
+        {
+            String sb;
+            FormatOptions formatOptions{};
+            Formatter::formatNode(sb, formatOptions, builder, node_);
+            std::cout << "Error find in: " << sb.data() << std::endl;
+            re_err = err;
+        }
+        node_ = node_->next();
+    } while (node_);
+
+    return re_err;
 }
 
 // BaseBuilder - Events

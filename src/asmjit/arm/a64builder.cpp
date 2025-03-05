@@ -50,6 +50,15 @@ Error Builder::finalize() {
   return serializeTo(&a);
 }
 
+Error Builder::finalize_debug(const BaseBuilder *builder)
+{
+    ASMJIT_PROPAGATE(runPasses());
+    Assembler a(_code);
+    a.addEncodingOptions(encodingOptions());
+    a.addDiagnosticOptions(diagnosticOptions());
+    return serializeTo_debug(&a, builder);
+}
+
 ASMJIT_END_SUB_NAMESPACE
 
 #endif // !ASMJIT_NO_AARCH64 && !ASMJIT_NO_BUILDER

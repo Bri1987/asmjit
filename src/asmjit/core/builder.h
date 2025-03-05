@@ -451,6 +451,7 @@ public:
   //! Although not explicitly required the emitter will most probably be of Assembler type. The reason is that
   //! there is no known use of serializing nodes held by Builder/Compiler into another Builder-like emitter.
   ASMJIT_API Error serializeTo(BaseEmitter* dst);
+  ASMJIT_API Error serializeTo_debug(BaseEmitter *dst, const BaseBuilder *builder);
 
   //! \}
 

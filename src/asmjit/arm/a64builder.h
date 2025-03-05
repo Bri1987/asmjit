@@ -45,6 +45,7 @@ public:
   //! \{
 
   ASMJIT_API Error finalize() override;
+  ASMJIT_API Error finalize_debug(const BaseBuilder *builder);
 
   //! \}
 };
