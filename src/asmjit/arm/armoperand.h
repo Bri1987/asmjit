@@ -340,7 +340,15 @@ public:
   ASMJIT_INLINE_NODEBUG void resetShiftOp() noexcept { _signature.setField<kSignatureMemShiftOpMask>(uint32_t(ShiftOp::kLSL)); }
 
   //! Gets whether the memory operand has shift (aka scale) constant.
-  ASMJIT_INLINE_NODEBUG constexpr bool hasShift() const noexcept { return _signature.hasField<kSignatureMemShiftValueMask>(); }
+    ASMJIT_INLINE_NODEBUG constexpr bool hasShift() const noexcept
+    {
+        auto shift_op = shiftOp();
+        bool is_extend_op = false;
+        if((uint32_t)(shift_op) >= 0x06u)
+            is_extend_op = true;
+        return _signature.hasField<kSignatureMemShiftValueMask>() || is_extend_op;
+    }
+
   //! Gets the memory operand's shift (aka scale) constant.
   ASMJIT_INLINE_NODEBUG constexpr uint32_t shift() const noexcept { return _signature.getField<kSignatureMemShiftValueMask>(); }
   //! Sets the memory operand's shift (aka scale) constant.

@@ -540,7 +540,8 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatOperand(
       ASMJIT_PROPAGATE(sb.append(", "));
       if (!m.isPreOrPost())
         ASMJIT_PROPAGATE(formatShiftOp(sb, m.shiftOp()));
-      ASMJIT_PROPAGATE(sb.appendFormat(" %u", m.shift()));
+      if(!((uint32_t)(m.shiftOp()) >= 0x06u && m.shift() == 0))
+          ASMJIT_PROPAGATE(sb.appendFormat(" %u", m.shift()));
     }
 
     if (!m.isPostIndex())
@@ -566,6 +567,8 @@ ASMJIT_FAVOR_SIZE Error FormatterInternal::formatOperand(
       ASMJIT_PROPAGATE(sb.append("0x"));
       return sb.appendUInt(uint64_t(val), 16);
     }
+    else if((predicate || shift) && predicate >= 0x06u && val == 0)
+        return sb.append("");
     else {
       return sb.appendInt(val, 10);
     }
